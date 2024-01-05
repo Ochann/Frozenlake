@@ -159,6 +159,44 @@ def play(env):
         env.render()
         print('Reward: {0}.'.format(r))
 
+# Tabular model-based algorithms
+def policy_evaluation(env, policy, gamma, theta, max_iterations):
+    value = np.zeros(env.n_states, dtype=np.float)
+
+    # TODO:
+
+    return value
+
+
+def policy_improvement(env, value, gamma):
+    policy = np.zeros(env.n_states, dtype=int)
+
+    # TODO:
+
+    return policy
+
+
+def policy_iteration(env, gamma, theta, max_iterations, policy=None):
+    if policy is None:
+        policy = np.zeros(env.n_states, dtype=int)
+    else:
+        policy = np.array(policy, dtype=int)
+
+    # TODO:
+
+    return policy, value
+
+
+def value_iteration(env, gamma, theta, max_iterations, value=None):
+    if value is None:
+        value = np.zeros(env.n_states)
+    else:
+        value = np.array(value, dtype=np.float)
+
+    # TODO:
+
+    return policy, value
+
 
 
 # Main Function
@@ -184,6 +222,22 @@ def main():
     env = FrozenLake(lake, slip=0.1, max_steps=16, seed=seed)
     gamma = 0.9
     play(env)
+
+  print('# Model-based algorithms')
+
+    print('')
+
+    print('## Policy iteration')
+    policy, value = policy_iteration(env, gamma, theta=0.001, max_iterations=128)
+    env.render(policy, value)
+
+    print('')
+
+    print('## Value iteration')
+    policy, value = value_iteration(env, gamma, theta=0.001, max_iterations=128)
+    env.render(policy, value)
+
+    print('')
 
 
 if __name__ == '__main__': main()
