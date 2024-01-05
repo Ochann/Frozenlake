@@ -112,6 +112,8 @@ class FrozenLake(Environment):
 
     def r(self, next_state, state, action):
         # TODO:
+        if state >= self.n_states - 1:
+            return 0
         if self.lake_flat[state] == '$':
             # reward
             return 1
@@ -174,11 +176,10 @@ def policy_evaluation(env, policy, gamma, theta, max_iterations):
         delta = 0
         for state in range(env.n_states):
             v = value[state]
-            value[state] = sum([env.p(next_state, state, policy[state]) * (
-                    env.r(next_state, state, policy[state]) + gamma * value[next_state]) for next_state in
-                                range(env.n_states)])
+            for next_state in range(env.n_states):
+                value[state] += env.p(next_state, state, policy[state]) * (env.r(next_state, state, policy[state])
+                                                                         + gamma * value[next_state])
             delta = max(delta, abs(v - value[state]))
-
         if delta < theta:
             break
         iteration += 1
