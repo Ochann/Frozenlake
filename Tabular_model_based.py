@@ -1,6 +1,6 @@
 import numpy as np
 import contextlib
-
+import random
 
 # Frozen lake environment
 
@@ -153,6 +153,9 @@ def play(env):
         c = input('\nMove: ')
         if c not in actions:
             raise Exception('Invalid action')
+
+        if random.random() <= env.slip:
+            c = random.choice(actions)
 
         state, r, done = env.step(actions.index(c))
 
