@@ -93,6 +93,7 @@ class FrozenLake(Environment):
         self.absorbing_state = n_states - 1
 
         # TODO:
+        self.transition_probabilities = np.load('p.npy')
 
         Environment.__init__(self, n_states, n_actions, max_steps, pi, seed=seed)
 
@@ -104,13 +105,11 @@ class FrozenLake(Environment):
         return state, reward, done
 
     def p(self, next_state, state, action):
-
-    # TODO:
+        # TODO:
 
     def r(self, next_state, state, action):
-
-    # TODO:
-
+        # TODO:
+    
     def render(self, policy=None, value=None):
         if policy is None:
             lake = np.array(self.lake_flat)
