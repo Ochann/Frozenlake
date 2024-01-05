@@ -109,7 +109,7 @@ class FrozenLake(Environment):
 
     def r(self, next_state, state, action):
         # TODO:
-    
+
     def render(self, policy=None, value=None):
         if policy is None:
             lake = np.array(self.lake_flat)

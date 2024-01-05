@@ -110,8 +110,9 @@ class FrozenLake(Environment):
 
     def r(self, next_state, state, action):
         # TODO:
-        if self.lake_flat[next_state] == '$':
-            return 1  #reaching goal
+        if self.lake_flat[state] == '$':
+            # reward
+            return 1
         else:
             return 0
 
