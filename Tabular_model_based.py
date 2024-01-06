@@ -171,18 +171,20 @@ def policy_evaluation(env, policy, gamma, theta, max_iterations):
     value = np.zeros(env.n_states, dtype=float)
 
     # TODO:
-    iteration = 1
+
     for i in range(max_iterations):
         delta = 0
         for state in range(env.n_states):
             v = value[state]
+            value[state] = float(0)
             for next_state in range(env.n_states):
-                value[state] += env.p(next_state, state, policy[state]) * (env.r(next_state, state, policy[state])
-                                                                         + gamma * value[next_state])
+                value[state] += env.p(next_state, state, policy[state]) \
+                                * (env.r(next_state, state, policy[state])
+                                   + gamma * value[next_state])
             delta = max(delta, abs(v - value[state]))
         if delta < theta:
             break
-        iteration += 1
+
     return value
 
 
@@ -191,11 +193,12 @@ def policy_improvement(env, value, gamma):
 
     # TODO:
     for state in range(env.n_states):
-        action_values = np.zeros(env.n_actions)
+        action_values = np.zeros(env.n_actions, dtype=np.float32)
         for action in range(env.n_actions):
             for next_state in range(env.n_states):
-                reward = env.r(next_state, state, action)
-                action_values[action] += env.p(next_state, state, action) * (reward + gamma * value[next_state])
+                action_values[action] += env.p(next_state, state, action) \
+                                         * (env.r(next_state, state, action)
+                                            + gamma * value[next_state])
         best_action = np.argmax(action_values)
         policy[state] = best_action
 
@@ -209,13 +212,13 @@ def policy_iteration(env, gamma, theta, max_iterations, policy=None):
         policy = np.array(policy, dtype=int)
 
     # TODO:
+    value = policy_evaluation(env, policy, gamma, theta, max_iterations)
     for i in range(max_iterations):
-        value = policy_evaluation(env, policy, gamma, theta, max_iterations)
-        new_policy = policy_improvement(env, value, gamma)
-
-        if np.array_equal(new_policy, policy):
+        policy = policy_improvement(env, value, gamma)
+        new_value = policy_evaluation(env, policy, gamma, theta, max_iterations)
+        if max(abs(new_value - value)) <= theta:
             break
-        policy = new_policy
+        value = new_value
 
     return policy, value
 
@@ -231,9 +234,13 @@ def value_iteration(env, gamma, theta, max_iterations, value=None):
         delta = 0
         for state in range(env.n_states):
             v = value[state]
-            value[state] = max([sum([env.p(next_state, state, action) * (
-                    env.r(next_state, state, action) + gamma * value[next_state]) for next_state in
-                                     range(env.n_states)]) for action in range(env.n_actions)])
+            action_values = np.zeros(env.n_actions, dtype=np.float32)
+            for action in range(env.n_actions):
+                for next_state in range(env.n_states):
+                    action_values[action] += env.p(next_state, state, action) \
+                                             * (env.r(next_state, state, action)
+                                                + gamma * value[next_state])
+            value[state] = max(action_values)
             delta = max(delta, np.abs(v - value[state]))
 
         if delta < theta:
