@@ -127,7 +127,6 @@ class FrozenLake(Environment):
         next_row, next_col = next_state // n_cols, next_state % n_cols
         target = np.array([next_row, next_col])
 
-        # 计算转移概率
         if np.array_equal(target, action_position):
             return 1 - 3*slip/4
         elif np.sum((target - initial) ** 2) == 1:
