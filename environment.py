@@ -2,6 +2,7 @@ import numpy as np
 import contextlib
 import random
 
+
 # Frozen lake environment
 
 # Configures numpy print options
@@ -107,7 +108,27 @@ class FrozenLake(Environment):
 
     def p(self, next_state, state, action):
         # TODO:
-        return self.transition_probabilities[next_state, state, action]
+        slip = 0.1
+
+        if self.state < len(self.lake_flat) and self.lake_flat[state] == '#' \
+                or state == self.absorbing_state or next_state == self.absorbing_state:
+            return 0
+
+        target = np.array([(next_state + 1) / self.n_cols - 1, next_state % self.n_cols])
+        initial = np.array([(state + 1) / self.n_cols - 1, state % self.n_cols])
+
+        actions = ([(-1, 0), (0, -1), (1, 0), (0, 1)])
+        action_position = initial + np.array(actions[action])
+
+        is_target = np.array_equal(target, action_position)
+
+        if np.sum((target - initial) ** 2) == 1:
+            if is_target:
+                return 1 - (3 * slip / 4)
+            else:
+                return slip / 4
+
+        return 0
 
     def r(self, next_state, state, action):
         # TODO:
@@ -162,7 +183,6 @@ def play(env):
 
         env.render()
         print('Reward: {0}.'.format(r))
-
 
 
 # Main Function

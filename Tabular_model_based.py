@@ -108,7 +108,32 @@ class FrozenLake(Environment):
 
     def p(self, next_state, state, action):
         # TODO:
-        return self.transition_probabilities[next_state, state, action]
+        slip = 0.1
+
+        if state == self.absorbing_state or self.lake_flat[state] in '#$':
+            return 1 if next_state == self.absorbing_state else 0
+
+        n_rows, n_cols = self.lake.shape
+        row, col = state // n_cols, state % n_cols
+        initial = np.array([row, col])
+
+        actions = [(-1, 0), (0, -1), (1, 0), (0, 1)]
+        direction = np.array(actions[action])
+        action_position = initial + direction
+
+        if not (0 <= action_position[0] < n_rows and 0 <= action_position[1] < n_cols):
+            action_position = initial
+
+        next_row, next_col = next_state // n_cols, next_state % n_cols
+        target = np.array([next_row, next_col])
+
+        # 计算转移概率
+        if np.array_equal(target, action_position):
+            return 1 - 3*slip/4
+        elif np.sum((target - initial) ** 2) == 1:
+            return slip / 4
+        else:
+            return 0
 
     def r(self, next_state, state, action):
         # TODO:
