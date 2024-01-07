@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="61df86f0-bf00-4802-9923-99335f444147" name="Changes" comment="Changes">
+      <change afterPath="$PROJECT_DIR$/Tabular_model_free.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Tabular_model_based.py" beforeDir="false" afterPath="$PROJECT_DIR$/Tabular_model_based.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/environment.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,15 +38,15 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/environment.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Tabular_model_free.py" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="F:\code\AI\Frozenlake" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.Tabular_model_based">
-    <configuration name="Tabular_model_based" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python.Tabular_model_free">
+    <configuration name="Tabular_model_free" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Frozenlake" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -56,7 +58,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Tabular_model_based.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Tabular_model_free.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -88,11 +90,11 @@
     </configuration>
     <list>
       <item itemvalue="Python.environment" />
-      <item itemvalue="Python.Tabular_model_based" />
+      <item itemvalue="Python.Tabular_model_free" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Tabular_model_based" />
+        <item itemvalue="Python.Tabular_model_free" />
       </list>
     </recent_temporary>
   </component>

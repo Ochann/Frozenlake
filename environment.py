@@ -109,26 +109,40 @@ class FrozenLake(Environment):
     def p(self, next_state, state, action):
         # TODO:
         slip = 0.1
-
-        if self.state < len(self.lake_flat) and self.lake_flat[state] == '#' \
-                or state == self.absorbing_state or next_state == self.absorbing_state:
-            return 0
-
-        target = np.array([(next_state + 1) / self.n_cols - 1, next_state % self.n_cols])
-        initial = np.array([(state + 1) / self.n_cols - 1, state % self.n_cols])
-
-        actions = ([(-1, 0), (0, -1), (1, 0), (0, 1)])
-        action_position = initial + np.array(actions[action])
-
-        is_target = np.array_equal(target, action_position)
-
-        if np.sum((target - initial) ** 2) == 1:
-            if is_target:
-                return 1 - (3 * slip / 4)
+        # check absorbing state
+        if state == self.absorbing_state or self.lake_flat[state] in '#$':
+            if next_state == self.absorbing_state:
+                return 1
             else:
-                return slip / 4
+                return 0
 
-        return 0
+        n_rows, n_cols = self.lake.shape
+        row, col = state // n_cols, state % n_cols
+        initial = np.array([row, col])
+
+        actions = [(-1, 0), (0, -1), (1, 0), (0, 1)]
+        direction = np.array(actions[action])
+        action_position = initial + direction
+        boundary = 0
+        if not 0 <= action_position[0] < n_rows:
+            boundary += 1
+        if not 0 <= action_position[1] < n_cols:
+            boundary += 1
+
+        if boundary != 0:
+            action_position = initial
+
+        next_row, next_col = next_state // n_cols, next_state % n_cols
+        target = np.array([next_row, next_col])
+
+        if np.array_equal(target, action_position):
+            if boundary == 2:
+                return 1 - slip / 2
+            return 1 - 3 * slip / 4
+        elif np.sum((target - initial) ** 2) == 1:
+            return slip / 4
+        else:
+            return 0
 
     def r(self, next_state, state, action):
         # TODO:

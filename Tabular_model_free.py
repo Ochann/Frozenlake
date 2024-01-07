@@ -106,43 +106,47 @@ class FrozenLake(Environment):
 
         return state, reward, done
 
+    # def p(self, next_state, state, action):
+    #     # TODO:
+    #     slip = 0.1
+    #     # check absorbing state
+    #     if state == self.absorbing_state or self.lake_flat[state] in '#$':
+    #         if next_state == self.absorbing_state:
+    #             return 1
+    #         else:
+    #             return 0
+    #
+    #     n_rows, n_cols = self.lake.shape
+    #     row, col = state // n_cols, state % n_cols
+    #     initial = np.array([row, col])
+    #
+    #     actions = [(-1, 0), (0, -1), (1, 0), (0, 1)]
+    #     direction = np.array(actions[action])
+    #     action_position = initial + direction
+    #     boundary = 0
+    #     if not 0 <= action_position[0] < n_rows:
+    #         boundary += 1
+    #     if not 0 <= action_position[1] < n_cols:
+    #         boundary += 1
+    #
+    #     if boundary != 0:
+    #         action_position = initial
+    #
+    #     next_row, next_col = next_state // n_cols, next_state % n_cols
+    #     target = np.array([next_row, next_col])
+    #
+    #     if np.array_equal(target, action_position):
+    #         if boundary == 2:
+    #             return 1 - slip / 2
+    #         return 1 - 3 * slip / 4
+    #     elif np.sum((target - initial) ** 2) == 1:
+    #         return slip / 4
+    #     else:
+    #         return 0
+
     def p(self, next_state, state, action):
         # TODO:
-        slip = 0.1
-        # check absorbing state
-        if state == self.absorbing_state or self.lake_flat[state] in '#$':
-            if next_state == self.absorbing_state:
-                return 1
-            else:
-                return 0
-
-        n_rows, n_cols = self.lake.shape
-        row, col = state // n_cols, state % n_cols
-        initial = np.array([row, col])
-
-        actions = [(-1, 0), (0, -1), (1, 0), (0, 1)]
-        direction = np.array(actions[action])
-        action_position = initial + direction
-        boundary = 0
-        if not 0 <= action_position[0] < n_rows:
-            boundary += 1
-        if not 0 <= action_position[1] < n_cols:
-            boundary += 1
-
-        if boundary!=0:
-            action_position = initial
-
-        next_row, next_col = next_state // n_cols, next_state % n_cols
-        target = np.array([next_row, next_col])
-
-        if np.array_equal(target, action_position):
-            if boundary == 2:
-                return 1 - slip/2
-            return 1 - 3*slip/4
-        elif np.sum((target - initial) ** 2) == 1:
-            return slip / 4
-        else:
-            return 0
+        return self.transition_probabilities[next_state, state, action]
 
     def r(self, next_state, state, action):
         # TODO:
@@ -287,6 +291,70 @@ def value_iteration(env, gamma, theta, max_iterations, value=None):
     return policy, value
 
 
+def e_greedy(s, e, random_state, q, n_actions):
+    if random_state.rand() < e:
+        return random_state.randint(n_actions)
+    else:
+        return np.argmax(q[s])
+
+
+# Tabular model-free algorithms
+def sarsa(env, max_episodes, eta, gamma, epsilon, seed=None):
+    random_state = np.random.RandomState(seed)
+
+    eta = np.linspace(eta, 0, max_episodes)
+    epsilon = np.linspace(epsilon, 0, max_episodes)
+
+    q = np.zeros((env.n_states, env.n_actions))
+
+    for i in range(max_episodes):
+        s = env.reset()
+        # TODO:
+        a = e_greedy(s, epsilon[i], random_state, q, env.n_actions)
+        terminal = False
+
+        while not terminal:
+            next_s, r, terminal = env.step(a)
+            next_a = e_greedy(next_s, epsilon[i], random_state, q, env.n_actions)
+            q[s, a] = q[s, a] + eta[i] * (r + gamma * q[next_s, next_a] - q[s, a])
+            s = next_s
+            a = next_a
+
+    policy = q.argmax(axis=1)
+    value = q.max(axis=1)
+
+    return policy, value
+
+
+def q_learning(env, max_episodes, eta, gamma, epsilon, seed=None):
+    random_state = np.random.RandomState(seed)
+
+    eta = np.linspace(eta, 0, max_episodes)
+    epsilon = np.linspace(epsilon, 0, max_episodes)
+
+    q = np.zeros((env.n_states, env.n_actions))
+
+    for i in range(max_episodes):
+        s = env.reset()
+        # TODO:
+
+        a = e_greedy(s, epsilon[i], random_state, q, env.n_actions)
+
+        done = False
+        while not done:
+            next_s, r, done = env.step(a)
+
+            q[s, a] = q[s, a] + eta[i] * (r + gamma * np.max(q[next_s]) - q[s, a])
+
+            s = next_s
+            a = e_greedy(s, epsilon[i], random_state, q, env.n_actions)
+
+    policy = q.argmax(axis=1)
+    value = q.max(axis=1)
+
+    return policy, value
+
+
 # Main Function
 def main():
     seed = 0
@@ -307,7 +375,7 @@ def main():
             ['.', '.', '.', '#'],
             ['#', '.', '.', '$']]
 
-    env = FrozenLake(lake, slip=0.1, max_steps=16, seed=seed)
+    env = FrozenLake(lake, slip=0.1, max_steps=64, seed=seed)
     gamma = 0.9
     # play(env)
 
@@ -326,6 +394,23 @@ def main():
     env.render(policy, value)
 
     print('')
+
+    print('# Model-free algorithms')
+    max_episodes = 4000
+
+    print('')
+
+    print('## Sarsa')
+    policy, value = sarsa(env, max_episodes, eta=0.5, gamma=gamma,
+                          epsilon=0.5, seed=seed)
+    env.render(policy, value)
+
+    print('')
+
+    print('## Q-learning')
+    policy, value = q_learning(env, max_episodes, eta=0.5, gamma=gamma,
+                               epsilon=0.5, seed=seed)
+    env.render(policy, value)
 
 
 if __name__ == '__main__': main()
