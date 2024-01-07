@@ -340,9 +340,9 @@ def q_learning(env, max_episodes, eta, gamma, epsilon, seed=None):
 
         a = e_greedy(s, epsilon[i], random_state, q, env.n_actions)
 
-        done = False
-        while not done:
-            next_s, r, done = env.step(a)
+        terminal = False
+        while not terminal:
+            next_s, r, terminal = env.step(a)
 
             q[s, a] = q[s, a] + eta[i] * (r + gamma * np.max(q[next_s]) - q[s, a])
 
